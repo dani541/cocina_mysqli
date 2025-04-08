@@ -58,7 +58,7 @@ function IngredientRecipe($id_recipe, $id_ingredient){
    $prepared= $c->prepare($sql);
  
 
-   $prepared->bind_param("ii", $id_recipe, $id_ingredient);;
+   $prepared->bind_param("ii", $id_recipe, $id_ingredient);
    return $prepared->execute();
 
 
@@ -83,6 +83,19 @@ function IngredientRecipe($id_recipe, $id_ingredient){
 
  }
 
+ function showIngredient(){
+
+   $c= connect();
+
+
+   $sql= "SELECT * FROM ingredients";
+
+   $r=$c->query($sql);
+   $c->close();
+   return $r;
+
+}
+
 
 
 
@@ -103,18 +116,43 @@ function IngredientRecipe($id_recipe, $id_ingredient){
 
 
 
- function findIngredient (){
+ function findRecipesWithIngredients() {
+   $c = connect();
+   $sql = "
+       SELECT recipes.id AS recipe_id, recipes.title AS recipe_title, recipes.description AS recipe_description, recipes.time AS recipe_time,
+              ingredients.id AS ingredient_id, ingredients.name AS ingredient_name, ingredients.quantity AS ingredient_quantity
+       FROM recipes
+       INNER JOIN ingredient_recipe ON recipes.id = ingredient_recipe.id_recipe
+       INNER JOIN ingredients ON ingredient_recipe.id_ingredient = ingredients.id
+   ";
+   
+   $prepared = $c->prepare($sql);
+   $prepared->execute();
+   $result = $prepared->get_result();
 
-   $c= connect();
+   $recipes = [];
+   while ($row = $result->fetch_assoc()) {
+       // Verifica si la receta ya está en el array $recipes
+       if (!isset($recipes[$row['recipe_id']])) {
+           $recipes[$row['recipe_id']] = [
+               'title' => $row['recipe_title'],
+               'description' => $row['recipe_description'],
+               'time' => $row['recipe_time'],
+               'ingredients' => []
+           ];
+       }
 
+       // Añadir el ingrediente a la receta correspondiente
+       $recipes[$row['recipe_id']]['ingredients'][] = [
+           'name' => $row['ingredient_name'],
+           'quantity' => $row['ingredient_quantity']
+       ];
+   }
 
-   $sql= "SELECT * from ingredients ";
-
-   $r=$c->query($sql);
-   $c->close();
-   return $r;
-
+   return $recipes;
 }
+
+
 
 
 
@@ -135,6 +173,7 @@ function findRecipes() {
 
 
 
+
    function findUSer($email){
 
       $c = connect();
@@ -147,7 +186,7 @@ function findRecipes() {
     $result = $prepared->get_result();
     
     if ($row = $result->fetch_assoc()) {
-        return $row; // Devuelve el usuario como array asociativo
+        return $row; 
     }
 
     return null; 

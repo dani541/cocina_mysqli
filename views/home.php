@@ -8,8 +8,10 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/classes/Ingredient.php";
 
 $users=findUsers();
 
-$ingredients=findIngredient();
-$recipes=findRecipes();
+
+$recipesIngredient = findRecipesWithIngredients();
+$ingredients = showIngredient();
+$recipes=showRecipes();
 
 $id=$title=$description=$time=$user=$id_ingredient=$id_recipe="";
 $titleEr=$descriptionEr=$timeEr=$id_ingredientEr=$id_recipeEr="";
@@ -150,14 +152,26 @@ if (isset($_POST['submit_IngreReci'])) {
 
     <h2>Recetas e Ingredientes</h2>
 
+    <?php foreach($recipesIngredient as $recipe):?>
 
-    <?php foreach($recipes as $recipe):?>
+                <p style="font-weight: bold;">Titulo: <?= $recipe["title"] ?></p>
+                <p>Descripción: <?= $recipe["description"] ?></p>
+                <p>Tiempo: <?= $recipe["time"] ?> minutos</p>
 
-     <p>Titulo: <?= $recipe->getTitle() ?></p>
-    <p>Descripción: <?= $recipe->getDescription() ?></p>
-    <p>Tiempo: <?= $recipe->getTime() ?></p>
+                <h4>Ingredientes:</h4>
+                <?php foreach($recipe['ingredients'] as $ingredient):?>
+                    <p><?= $ingredient['name'] ?> - <?= $ingredient['quantity'] ?> unidades</p>
+                <?php endforeach?>
+
+                <br>
 
     <?php endforeach?>
+
+
+<br>
+
+
+
 
     <h4>Insertar receta</h4>
 
@@ -213,7 +227,7 @@ if (isset($_POST['submit_IngreReci'])) {
     <form action="" method="POST">
 
         <label for="">Ingrediente:</label>
->
+
         
     <select name="id_ingredient" id="">
         <?php foreach($ingredients as $ingredient): ?>
@@ -229,7 +243,7 @@ if (isset($_POST['submit_IngreReci'])) {
 
     <select name="id_recipe" id="">
         <?php foreach($recipes as $recipe): ?>
-        <option value="<?= $recipe->getId()  ?>"><?= $recipe->getTitle()?></option>
+        <option value="<?= $recipe['id']  ?>"><?= $recipe['title']?></option>
 
         <?php endforeach ?>
     </select>

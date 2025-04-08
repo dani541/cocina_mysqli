@@ -11,14 +11,14 @@ class Ingredient{
     private $quantity;
 
 
-    private $recipe_id;
+  
 
 
-    public function __construct($id, $name, $quantity, $recipe_id) {
+    public function __construct($id, $name, $quantity) {
         $this->name= $name;
         $this->quantity=$quantity;
         $this->id=$id;
-        $this->recipe_id=$recipe_id;
+     
     }
 
 
@@ -66,25 +66,7 @@ class Ingredient{
         return $this;
     }
 
-    /**
-     * Get the value of recipe_id
-     */ 
-    public function getRecipe_id()
-    {
-        return $this->recipe_id;
-    }
-
-    /**
-     * Set the value of recipe_id
-     *
-     * @return  self
-     */ 
-    public function setRecipe_id($recipe_id)
-    {
-        $this->recipe_id = $recipe_id;
-
-        return $this;
-    }
+  
 
     /**
      * Get the value of id
